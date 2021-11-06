@@ -7,16 +7,18 @@
 
 import Foundation
 
-struct APIClient {
-    func fetchData(completion: @escaping (Result<[Category], Error>) -> ()) {
+struct APIClient<T: Decodable> {
+    
+    private let urlSession = URLSession(configuration: URLSessionConfiguration.default)
+
+    
+    func fetchData(url: String, completion: @escaping (Result<T, Error>) -> ()) {
         
-        let endpointURLString = "https://www.themealdb.com/api/json/v1/1/categories.php"
-        
-        guard let url = URL(string: endpointURLString) else {
+        guard let urlEndpoint = URL(string: url) else {
             print("bad url")
             return
         }
-        let dataTask = URLSession.shared.dataTask(with: url) {
+        urlSession.dataTask(with: urlEndpoint) {
             (data, response, error) in
             if let error = error {
                 return completion(.failure(error))
@@ -27,14 +29,14 @@ struct APIClient {
             }
             if let jsonData = data {
                 do {
-                    let categories = try
-                        JSONDecoder().decode(CategoryList.self, from: jsonData).categories
-                    completion(.success(categories))
+                    let outcome = try
+                        JSONDecoder().decode(T.self, from: jsonData)
+                    completion(.success(outcome))
                 } catch {
                     completion(.failure(error))
                 }
             }
         }
-        dataTask.resume()
+        .resume()
     }
 }

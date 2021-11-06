@@ -37,33 +37,32 @@ class CategoryViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .clear
+        view.backgroundColor = .white
         addSubview()
         fetchData()
        collectionView.delegate = self
         collectionView.dataSource = self
         collectionViewConstraints()
-       
-        fetchData()
     }
-    private let apiClient = APIClient()
+    private let categorylist = APIClient<CategoryList>()
     
     private func fetchData() {
-        apiClient.fetchData { [weak self] (result) in
+        categorylist.fetchData(url: APIHelper.URL.link + "categories.php"  ) { [weak self] (result) in
             switch result {
             case .failure(let error):
               print(error)
-            case .success(let countries):
-                self?.allRecipes = countries
+            case .success(let outcome):
+                self?.allRecipes = outcome.categories
             }
           }
         }
     private func collectionViewConstraints() {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.widthAnchor.constraint(equalTo: self.view.widthAnchor, constant: 0).isActive = true
-        collectionView.heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
-        collectionView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
-        collectionView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: 0).isActive = true
+         collectionView.widthAnchor.constraint(equalTo: self.view.widthAnchor, constant: 0).isActive = true
+         collectionView.heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
+         collectionView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+         collectionView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: 0).isActive = true
+
 
     }
 }
