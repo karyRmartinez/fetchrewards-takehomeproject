@@ -11,8 +11,17 @@ struct CategoryList: Codable {
     let categories: [Category]
 }
 
-struct Category: Codable {
-    let idCategory, strCategory: String
-    let strCategoryThumb: String
-    let strCategoryDescription: String
+struct Category: Codable , Hashable {
+    let id: String
+    let name: String
+    let thumbnailURL: String
+    let description: String
+    
+    enum CodingKeys: String, CodingKey {
+        case id = "idCategory"
+        case name = "strCategory"
+        case thumbnailURL = "strCategoryThumb"
+        case description = "strCategoryDescription"
+    }
 }
+

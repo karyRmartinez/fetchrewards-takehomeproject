@@ -6,3 +6,15 @@
 //
 
 import Foundation
+
+struct MealInfo: Decodable {
+    let meals: [Meal]
+}
+
+struct Meal: Decodable {
+    let id: String
+    let name: String
+    let thumbnailURL: String
+    
+    
+}
