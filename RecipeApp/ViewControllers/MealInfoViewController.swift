@@ -22,29 +22,38 @@ class MealInfoViewController: UIViewController {
           layout.scrollDirection = .vertical
           layout.minimumInteritemSpacing = 0
           layout.itemSize = CGSize(width: view.frame.width, height: 400)
-          let BrowserView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
+          let mealCollectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
 
-         // BrowserView.register(browserViewCollectionViewCell.self, forCellWithReuseIdentifier: "theCell")
-          BrowserView.backgroundColor = .white
-         // BrowserView.dataSource = sel        // BrowserView.delegate = self
+         mealCollectionView.register(MealCollectionViewCell.self, forCellWithReuseIdentifier: "theCell")
+          mealCollectionView.backgroundColor = .white
+          mealCollectionView.dataSource = self
+         mealCollectionView.delegate = self
           
-          return BrowserView
+          return mealCollectionView
       }()
+    func addSubview() {
+    self.view.addSubview(collectionView)
+      
+    }
     private let Meallist = APIClient<MealInfo>()
-
-    private func fetchData() {
-        Meallist.fetchData(url: APIHelper.URL.link + "filter.php?"  ) { [weak self] (result) in
-            switch result {
-            case .failure(let error):
-              print(error)
-            case .success(let outcome):
-                self?.allMeals = outcome.meals
-            }
-          }
-        }
+    
+//    private func fetchData() {
+//        Meallist.fetchData(url: APIHelper.URL.link + "filter.php?c="  ) { [weak self] (result) in
+//            switch result {
+//            case .failure(let error):
+//              print(error)
+//            case .success(let outcome):
+//                self?.allMeals = outcome.meals
+//            }
+//          }
+//        }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        addSubview()
+       // fetchData()
+        collectionView.delegate = self
+         collectionView.dataSource = self
         collectionViewConstraints()
 
     }
@@ -70,7 +79,7 @@ extension MealInfoViewController: UICollectionViewDelegate, UICollectionViewData
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "theCell", for: indexPath) as! browserViewCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "theCell", for: indexPath) as! MealCollectionViewCell
         let currentRecipe = allMeals[indexPath.row]
         cell.titleLabel.text = currentRecipe.name
     
