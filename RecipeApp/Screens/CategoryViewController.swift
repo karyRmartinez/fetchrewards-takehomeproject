@@ -9,6 +9,9 @@ import UIKit
 
 class CategoryViewController: UIViewController {
     
+    //MARK: -Properies
+    private let categorylist = APIClient<CategoryList>()
+    
     var allRecipes = [Category]() {
         didSet {
             DispatchQueue.main.async {
@@ -20,59 +23,59 @@ class CategoryViewController: UIViewController {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumInteritemSpacing = 0
-        layout.itemSize = CGSize(width: view.frame.width, height: 400)
-        let BrowserView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
-
-        BrowserView.register(browserViewCollectionViewCell.self, forCellWithReuseIdentifier: "theCell")
-        BrowserView.backgroundColor = .white
-        BrowserView.dataSource = self
-       BrowserView.delegate = self
+        layout.itemSize = CGSize(width: view.frame.width, height: 75)
+        let CategoryView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
         
-        return BrowserView
+        CategoryView.register(CategoryCollectionViewCell.self, forCellWithReuseIdentifier: "categoryCell")
+        CategoryView.backgroundColor = .white
+        CategoryView.dataSource = self
+        CategoryView.delegate = self
+         return CategoryView
     }()
     
     func addSubview() {
-    self.view.addSubview(collectionView)
-      
+        self.view.addSubview(collectionView)
+        
     }
+    // MARK: Lifecycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         addSubview()
         fetchData()
-       collectionView.delegate = self
+        collectionView.delegate = self
         collectionView.dataSource = self
         collectionViewConstraints()
     }
-    private let categorylist = APIClient<CategoryList>()
-    
+    // MARK: Loading Data
     private func fetchData() {
-        categorylist.fetchData(url: APIHelper.URL.link + "categories.php"  ) { [weak self] (result) in
+        categorylist.fetchData(url: APIHelper.URL.base + "categories.php"  ) { [weak self] (result) in
             switch result {
             case .failure(let error):
-              print(error)
+                print(error)
             case .success(let outcome):
                 self?.allRecipes = outcome.categories
             }
-          }
         }
-    private func collectionViewConstraints() {
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-         collectionView.widthAnchor.constraint(equalTo: self.view.widthAnchor, constant: 0).isActive = true
-         collectionView.heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
-         collectionView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
-         collectionView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: 0).isActive = true
-
-
     }
-}
+    // MARK: - Constraints
+    private func collectionViewConstraints() {
+            collectionView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant:  25),
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -25),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
 
+}
+    // MARK: - Extensions
 extension CategoryViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedRecipe = allRecipes[indexPath.row]
-       // let detailViewController = DetailViewController()
-       // detailViewController.currentRecipes = selectedRecipe
-       // self.navigationController?.pushViewController(detailViewController, animated: true)
+        let detailViewController = SearchResultsViewController(categoryMealName: allRecipes[indexPath.item].name)
+        self.navigationController?.pushViewController(detailViewController, animated: true)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -80,12 +83,12 @@ extension CategoryViewController: UICollectionViewDelegate, UICollectionViewData
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "theCell", for: indexPath) as! browserViewCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "categoryCell", for: indexPath) as! CategoryCollectionViewCell
         let currentRecipe = allRecipes[indexPath.row]
         cell.titleLabel.text = currentRecipe.name
-    
-       
-      
+        
+        
+        
         return cell
     }
     

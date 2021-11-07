@@ -11,7 +11,7 @@ import UIKit
 enum APIHelper {
     
     enum URL {
-        static let link = "https://www.themealdb.com/api/json/v1/1/"
+        static let base = "https://www.themealdb.com/api/json/v1/1/"
     }
  
 }
