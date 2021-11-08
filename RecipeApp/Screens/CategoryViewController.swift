@@ -40,11 +40,10 @@ class CategoryViewController: UIViewController {
     // MARK: Lifecycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         addSubview()
         fetchData()
-        collectionView.delegate = self
-        collectionView.dataSource = self
+        NavigationBarTitle()
         collectionViewConstraints()
     }
     // MARK: Loading Data
@@ -54,9 +53,14 @@ class CategoryViewController: UIViewController {
             case .failure(let error):
                 print(error)
             case .success(let outcome):
-                self?.allRecipes = outcome.categories
+                self?.allRecipes = outcome.categories.sorted()
+                { $0.name < $1.name }
             }
         }
+    }
+    
+    private func NavigationBarTitle() {
+        self.title = "Categories"
     }
     // MARK: - Constraints
     private func collectionViewConstraints() {

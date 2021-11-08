@@ -15,8 +15,9 @@ class CategoryResultsCollectionCell: UICollectionViewCell {
         let label = UILabel()
         label.text = "placeHolder"
         label.textAlignment = .center
+        label.numberOfLines = 0
         label.textColor = .black
-        label.font = .boldSystemFont(ofSize: 17)
+        label.font = .boldSystemFont(ofSize: 24)
         return label
     }()
      
@@ -32,7 +33,7 @@ class CategoryResultsCollectionCell: UICollectionViewCell {
     // refactor contraints
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .systemGray
+        backgroundColor = .systemBackground
        addSubview(mealnameLabel)
        settitleConstraints()
     

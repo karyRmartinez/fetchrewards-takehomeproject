@@ -55,17 +55,23 @@ class SearchResultsViewController: UIViewController {
             case .failure(let error):
               print(error)
             case .success(let outcome):
-                self?.currentMealResults = outcome.meals
+                self?.currentMealResults = outcome.meals.sorted()
+                { $0.name < $1.name}
             }
           }
         }
     //MARK: Lifecycle Method
     override func viewDidLoad() {
+        view.backgroundColor = .systemBackground
         super.viewDidLoad()
         addSubview()
         fetchData(with: categoryMealName)
+        NavigationBarTitle()
         collectionViewConstraints()
 
+    }
+    private func NavigationBarTitle() {
+        self.title = "Meal Results"
     }
     private func collectionViewConstraints() {
    collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -81,8 +87,9 @@ class SearchResultsViewController: UIViewController {
 extension SearchResultsViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedRecipe = currentMealResults[indexPath.row]
-        let detailViewController = DetailViewControllerViewController()
-      // detailViewController.allMeals = selectedRecipe
+        
+        let detailViewController = DetailViewControllerViewController(mealID: selectedRecipe.id, mealName: selectedRecipe.name)
+       // detailViewController.allMeals = selectedRecipe
        self.navigationController?.pushViewController(detailViewController, animated: true)
     }
     
